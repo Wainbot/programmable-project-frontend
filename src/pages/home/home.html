@@ -1,0 +1,26 @@
+<ion-header>
+    <ion-navbar color="dark">
+        <ion-title>
+            <ion-icon name="map" color="light"></ion-icon>
+        </ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="page-home">
+    <div #map id="map"></div>
+</ion-content>
+
+<ion-footer>
+    <ion-navbar color="light">
+        <ion-buttons start>
+            <button class="btn-itineraire" ion-button large (click)="openItineraire()">
+                <ion-icon name="trending-up"></ion-icon>
+            </button>
+        </ion-buttons>
+        <ion-buttons end>
+            <button class="btn-accident" ion-button large (click)="addAccident()">
+                <ion-icon name="warning"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-footer>

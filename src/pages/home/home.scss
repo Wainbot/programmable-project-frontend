@@ -1,0 +1,68 @@
+$primary:    #5755d9;
+$secondary:  #2ecc71;
+$danger:     #e74c3c;
+$light:      #f5f5fd;
+$dark:       rgb(25, 28, 35);
+
+.page-home {
+  .scroll {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #map {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+ion-header {
+  ion-navbar {
+    ion-title {
+      ion-icon {
+        font-size: 45px;
+      }
+    }
+  }
+}
+
+ion-footer {
+  ion-navbar {
+    height: 55px;
+
+    button {
+      width: 50px;
+      height: 50px;
+      color: #FFF !important;
+      padding: 20px 10px !important;
+
+      &.btn-accident {
+        background-color: $danger !important;
+      }
+
+      &.btn-itineraire {
+        background-color: $primary !important;
+      }
+
+      ion-icon {
+        font-size: 25px;
+      }
+    }
+  }
+}
+
+.toast-accident>div {
+  margin-top: 60px !important;
+  text-align: center;
+  background-color: transparentize($primary, 0.1) !important;
+}
+
+.marker {
+  //background-image: url('mapbox-icon.png');
+  background: tomato;
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+}
