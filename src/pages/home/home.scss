@@ -5,7 +5,7 @@ $light:      #f5f5fd;
 $dark:       rgb(25, 28, 35);
 
 .page-home {
-  .scroll {
+  .scroll-content {
     height: 100%;
     overflow: hidden;
   }
@@ -31,17 +31,22 @@ ion-footer {
     height: 55px;
 
     button {
-      width: 50px;
-      height: 50px;
+      width: 60px;
       color: #FFF !important;
       padding: 20px 10px !important;
 
       &.btn-accident {
         background-color: $danger !important;
+        position: absolute;
+        right: 20px;
+        top: 0;
       }
 
       &.btn-itineraire {
         background-color: $primary !important;
+        position: absolute;
+        left: 20px;
+        top: 0;
       }
 
       ion-icon {
@@ -52,17 +57,7 @@ ion-footer {
 }
 
 .toast-accident>div {
-  margin-top: 60px !important;
+  margin-top: 80px !important;
   text-align: center;
-  background-color: transparentize($primary, 0.1) !important;
-}
-
-.marker {
-  //background-image: url('mapbox-icon.png');
-  background: tomato;
-  background-size: cover;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  cursor: pointer;
+  background-color: transparentize($dark, 0.1) !important;
 }

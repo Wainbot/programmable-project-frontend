@@ -35,7 +35,7 @@ export class HomePage {
         });
         let toast = this.toastCtrl.create({
             message: 'Accident ajouté',
-            duration: 3000,
+            duration: 2000,
             dismissOnPageChange: true,
             cssClass: "toast-accident",
             position: 'top'
@@ -57,50 +57,17 @@ export class HomePage {
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
             };
             this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-            // mapboxgl.accessToken = 'pk.eyJ1Ijoid2FpbmJvdCIsImEiOiJjamN6dnhycDgyY2htMnBvNXo0NTd5d3lqIn0.iOErKmorD8us28LNPyXadg';
-
-            // let map = new mapboxgl.Map({
-            //     container: 'map',
-            //     style: 'mapbox://styles/mapbox/light-v9',
-            //     center: [position.coords.longitude, position.coords.latitude],
-            //     zoom: 15
-            // });
-
-            // let geojson = {
-            //     type: 'FeatureCollection',
-            //     features: [{
-            //         type: 'Feature',
-            //         geometry: {
-            //             type: 'Point',
-            //             coordinates: [-77.032, 38.913]
-            //         },
-            //         properties: {
-            //             title: 'Mapbox',
-            //             description: 'Washington, D.C.'
-            //         }
-            //     },
-            //         {
-            //             type: 'Feature',
-            //             geometry: {
-            //                 type: 'Point',
-            //                 coordinates: [-122.414, 37.776]
-            //             },
-            //             properties: {
-            //                 title: 'Mapbox',
-            //                 description: 'San Francisco, California'
-            //             }
-            //         }]
-            // };
-
-            // add markers to map
-            // geojson.features.forEach(function(marker) {
-            //     let el = document.createElement('div');
-            //     el.className = 'marker';
-            //     new mapboxgl.Marker(el)
-            //         .setLngLat(marker.geometry.coordinates)
-            //         .addTo(map);
-            // });
-
+            new google.maps.Marker({
+                map: this.map,
+                animation: google.maps.Animation.DROP,
+                position: latLng,
+                icon: {
+                    url: 'assets/imgs/direction.png',
+                    scaledSize: new google.maps.Size(50, 50),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(30, 30)
+                }
+            });
             loader.dismiss();
         }, (err) => {
             console.log(err);
