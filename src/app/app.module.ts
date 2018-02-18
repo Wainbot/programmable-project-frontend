@@ -6,7 +6,10 @@ import {HomePage} from '../pages/home/home';
 import {ItineraireModal} from '../pages/itineraire/itineraire';
 import {Geolocation} from '@ionic-native/geolocation';
 import {StatusBar} from '@ionic-native/status-bar';
+import {GoogleMaps} from '@ionic-native/google-maps';
 import {SplashScreen} from '@ionic-native/splash-screen';
+import {DeviceOrientation} from '@ionic-native/device-orientation';
+import {HTTP} from '@ionic-native/http';
 
 @NgModule({
     declarations: [
@@ -28,6 +31,9 @@ import {SplashScreen} from '@ionic-native/splash-screen';
         StatusBar,
         SplashScreen,
         Geolocation,
+        GoogleMaps,
+        DeviceOrientation,
+        HTTP,
         {provide: ErrorHandler, useClass: IonicErrorHandler}
     ]
 })
