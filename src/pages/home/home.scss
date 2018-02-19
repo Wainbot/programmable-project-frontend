@@ -1,8 +1,8 @@
-$primary:    #5755d9;
-$secondary:  #2ecc71;
-$danger:     #e74c3c;
-$light:      #f5f5fd;
-$dark:       rgb(25, 28, 35);
+$primary: #5755d9;
+$secondary: #2ecc71;
+$danger: #e74c3c;
+$light: #f5f5fd;
+$dark: rgb(25, 28, 35);
 
 .page-home {
   .scroll-content {
@@ -27,7 +27,10 @@ ion-header {
 }
 
 ion-footer {
+  border: none !important;
+
   ion-navbar {
+    border: none !important;
     height: 100px;
 
     button {
@@ -36,18 +39,27 @@ ion-footer {
       margin-top: 10px !important;
       color: #FFF !important;
       padding: 41px 0 !important;
+      border-radius: 50% !important;
 
       &.btn-accident {
         background-color: $danger !important;
         position: absolute;
-        right: 10px;
+        right: 50%;
+        top: 0;
+        transform: translateX(50%);
+      }
+
+      &.btn-bouchon {
+        background-color: #8e44ad !important;
+        position: absolute;
+        left: 10px;
         top: 0;
       }
 
-      &.btn-itineraire {
-        background-color: $primary !important;
+      &.btn-travaux {
+        background-color: #f39c12 !important;
         position: absolute;
-        left: 10px;
+        right: 10px;
         top: 0;
       }
 
@@ -58,7 +70,71 @@ ion-footer {
   }
 }
 
-.toast-accident>div {
+.toast-accident > div {
   text-align: center;
   background-color: transparentize($dark, 0.1) !important;
+}
+
+#popup {
+  width: 300px;
+  height: 250px;
+  margin: auto;
+  background-color: transparentize($dark, 0.2);
+  //border: 5px solid $primary;
+  padding: 20px;
+  text-align: center;
+  z-index: 9999;
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  border-radius: 15px;
+
+  h3 {
+    font-size: 14pt;
+    color: #FFF;
+    margin-bottom: 25px;
+  }
+
+  p {
+    color: #FFF;
+    margin-bottom: 5px;
+  }
+
+  .progress-back {
+    width: 100%;
+    height: 15px;
+    border-radius: 1rem;
+    padding: 3px;
+    background-color: $light;
+  }
+
+  .progress-front {
+    border-radius: 1rem;
+    height: 100%;
+    background-color: $primary;
+  }
+
+  button {
+    width: 80px;
+    height: 80px;
+    margin-top: 25px !important;
+    color: #FFF !important;
+    padding: 41px 0 !important;
+    border-radius: 50% !important;
+    font-size: 40px;
+    z-index: 9999999 !important;
+
+    &.btn-vote-non {
+      background-color: $danger;
+      margin-left: 20px;
+    }
+
+    &.btn-vote-oui {
+      background-color: $secondary;
+      margin-right: 20px;
+    }
+  }
 }

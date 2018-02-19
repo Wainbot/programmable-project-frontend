@@ -1,9 +1,8 @@
 import {Component, ViewChild} from '@angular/core';
 import {NavController, LoadingController, ModalController, ToastController, Loading, Platform} from 'ionic-angular';
-import {GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions} from '@ionic-native/google-maps';
+import {GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, LatLng} from '@ionic-native/google-maps';
 import {DeviceOrientation, DeviceOrientationCompassHeading} from '@ionic-native/device-orientation';
 import {Geolocation} from '@ionic-native/geolocation';
-import {ItineraireModal} from '../itineraire/itineraire';
 import {HTTP} from '@ionic-native/http';
 
 @Component({
@@ -17,7 +16,13 @@ export class HomePage {
     map: GoogleMap;
     position: { lat: number; lng: number };
     loader: Loading;
-    // problems: [{}];
+    oldAccidents;
+    bouchonLoader = false;
+    bouchonAccident = false;
+    bouchonTravaux = false;
+    accidentPopup = false;
+    voteYesLoader = false;
+    voteNonLoader = false;
 
     constructor(public navCtrl: NavController,
                 public geolocation: Geolocation,
@@ -31,7 +36,10 @@ export class HomePage {
         this.position = {
             lat: 43.6157669,
             lng: 7.0724593
-        }
+        };
+
+        this.oldAccidents = [];
+        this.accidentPopup = false;
     }
 
     ionViewDidLoad() {
@@ -106,61 +114,98 @@ export class HomePage {
         });
     }
 
-    openItineraire() {
-        let modal = this.modalCtrl.create(ItineraireModal);
-        modal.present();
-    }
-
-    addAccident() {
+    addAccident(message, gravite) {
         this.http.post(
             'https://gestion-accident.herokuapp.com/accidents',
             {
                 latitude: this.position.lat,
                 longitude: this.position.lng,
-                nombre: 0,
-                commentaires: '',
-                gravite: 0,
+                nombre: 1,
+                commentaires: message,
+                gravite: gravite,
                 lieu: ''
             },
             {})
-            // .then(data => {
-                // alert(JSON.stringify(data.data));
-            // })
-            // .catch(error => {
-                // alert(JSON.stringify(error.error));
-            // });
+            .then(data => {
+                let toast = this.toastCtrl.create({
+                    message: 'Incident déclaré !',
+                    duration: 2000,
+                    dismissOnPageChange: true,
+                    cssClass: "toast-accident",
+                    position: 'top'
+                });
+                toast.present();
+                this.bouchonLoader = false;
+                this.bouchonTravaux = false;
+                this.bouchonAccident = false;
+            });
     }
 
     getAccidents() {
         this.http.get('https://gestion-accident.herokuapp.com/accidents/' + this.position.lat + '/' + this.position.lng, {}, {})
             .then(data => {
                 this.map.clear();
-                // this.problems = [];
-                // alert(JSON.stringify(data.data));
+
                 let accidents = JSON.parse(data.data);
+                let notSameAccidents = [];
+
+                if (accidents.length > 0) {
+                    if (this.oldAccidents.length > 0) {
+                        notSameAccidents = accidents.filter((newA) => {
+                            return !this.oldAccidents.find((oldA) => {
+                                return newA.longitude == oldA.longitude && newA.latitude == oldA.latitude;
+                            });
+                        });
+                    } else {
+                        notSameAccidents = accidents;
+                    }
+                }
+
+                if (notSameAccidents.length > 0) {
+                    let message = notSameAccidents.length + ' nouveaux incidents se trouvent sur votre route';
+                    if (notSameAccidents.length == 1) {
+                        message = notSameAccidents.length + ' nouvel incident se trouve sur votre route';
+                    }
+                    let toast = this.toastCtrl.create({
+                        message: message,
+                        duration: 4000,
+                        dismissOnPageChange: true,
+                        cssClass: "toast-accident",
+                        position: 'top'
+                    });
+                    toast.present();
+                }
+
+                this.oldAccidents = accidents;
+
                 if (accidents.length > 0) {
                     accidents.forEach((accident) => {
-                        // this.problems.push(accident);
-
                         let accidentPosition = {lat: accident.latitude, lng: accident.longitude};
 
                         this.map.addCircle({
                             'center': accidentPosition,
-                            'radius': 15,
+                            'radius': 16,
                             'strokeColor': '#9e392a',
-                            'strokeWidth': 5,
-                            'fillColor': '#e74c3c',
-                            'opacity': 0.5
+                            'strokeWidth': 1,
+                            'fillColor': 'rgb(158, 57, 42, 0.1)',
+                            'clickable': true
+                        }).then(circle => {
+                            circle.on(GoogleMapsEvent.CIRCLE_CLICK)
+                                .subscribe((position: LatLng) => {
+                                    this.accidentPopup = accidents.find((b) => {
+                                        return (Math.abs(parseInt(position[0].lng) - parseInt(b.longitude)) < 0.001) && (Math.abs(parseInt(position[0].lat) - parseInt(b.latitude)) < 0.001);
+                                    });
+                                    if (typeof this.accidentPopup === 'undefined' || this.accidentPopup === null) {
+                                        this.accidentPopup = false;
+                                    } else {
+                                        this.accidentPopup['gravitePerc'] = (parseInt(this.accidentPopup['gravite']) * 10) + '%';
+                                    }
+                                });
                         });
-
-                        // this.map.addMarker({
-                        //     'map': this.map,
-                        //     'position': accidentPosition
-                        // });
                     });
                 }
 
-                let hideFooterTimeout = setTimeout(() => {
+                setTimeout(() => {
                     this.getAccidents();
                 }, 2000);
             })
@@ -170,5 +215,41 @@ export class HomePage {
                 // console.log(error.headers);
                 // alert(error.error);
             });
+    }
+
+    vote(accident, YesNo) {
+        if (YesNo) {
+            accident.oui++;
+        } else {
+            accident.non++;
+        }
+        this.http.put(
+            'https://gestion-accident.herokuapp.com/accidentsC',
+            {
+                latitude: accident.latitude,
+                longitude: accident.longitude,
+                nombre: accident.nombre,
+                commentaires: accident.commentaires,
+                gravite: accident.gravite,
+                lieu: accident.lieu,
+                gps: accident.gps,
+                oui: accident.oui,
+                non: accident.non
+            },
+            {})
+            .then(data => {
+                this.voteYesLoader = false;
+                this.voteNonLoader = false;
+                this.accidentPopup = false;
+                let toast = this.toastCtrl.create({
+                    message: 'Merci d\'avoir voté !',
+                    duration: 2000,
+                    dismissOnPageChange: true,
+                    cssClass: "toast-accident",
+                    position: 'top'
+                });
+                toast.present();
+            })
+            .catch(error => alert(JSON.stringify(error)));
     }
 }

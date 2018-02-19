@@ -8,15 +8,39 @@
 
 <ion-content class="page-home">
     <div #map id="map"></div>
+    <div id="popup" *ngIf="accidentPopup != false">
+        <!--{{accidentPopup|json}}-->
+        <h3>{{accidentPopup.commentaires[0]}}</h3>
+        <p style="font-size: 11pt;">Gravité</p>
+        <div class="progress-back">
+            <div class="progress-front" [ngStyle]="{'width': accidentPopup.gravitePerc}"></div>
+        </div>
+        <button (click)="vote(accidentPopup, true); voteYesLoader = true;" ion-button large class="btn-vote-oui">
+            <ion-icon *ngIf="!voteYesLoader" name="ios-thumbs-up"></ion-icon>
+            <ion-spinner *ngIf="voteYesLoader" name="crescent"></ion-spinner>
+        </button>
+        <button (click)="vote(accidentPopup, false); voteNonLoader = true;" ion-button large class="btn-vote-non">
+            <ion-icon *ngIf="!voteNonLoader" name="ios-thumbs-down"></ion-icon>
+            <ion-spinner *ngIf="voteNonLoader" name="crescent"></ion-spinner>
+        </button>
+    </div>
 </ion-content>
 
 <ion-footer>
-    <ion-navbar color="light">
-        <!--<button class="btn-itineraire" ion-button large (click)="openItineraire()">-->
-            <!--<ion-icon name="trending-up"></ion-icon>-->
-        <!--</button>-->
-        <button class="btn-accident" ion-button large (click)="addAccident()">
-            <ion-icon name="warning"></ion-icon>
+    <ion-navbar color="transparent" no-border>
+        <button class="btn-bouchon" ion-button large (click)="addAccident('Attention, gros bouchons !', 4); bouchonLoader = true;">
+            <ion-icon *ngIf="!bouchonLoader" name="md-car"></ion-icon>
+            <ion-spinner *ngIf="bouchonLoader" name="crescent"></ion-spinner>
+        </button>
+
+        <button class="btn-accident" ion-button large (click)="addAccident('Attention, accident :-(', 7); bouchonAccident = true;">
+            <ion-icon *ngIf="!bouchonAccident" name="warning"></ion-icon>
+            <ion-spinner *ngIf="bouchonAccident" name="crescent"></ion-spinner>
+        </button>
+
+        <button class="btn-travaux" ion-button large (click)="addAccident('Route barrée ! Impossible de passer...', 1); bouchonTravaux = true;">
+            <ion-icon *ngIf="!bouchonTravaux" name="md-close-circle"></ion-icon>
+            <ion-spinner *ngIf="bouchonTravaux" name="crescent"></ion-spinner>
         </button>
     </ion-navbar>
 </ion-footer>
